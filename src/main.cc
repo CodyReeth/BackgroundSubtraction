@@ -1,34 +1,28 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include "VideoReader.h"
+#include "VideoWriter.h"
+#include "VideoMat.h"
+#include "SVD.h"
+#include "LowRankMask.h"
 
-int main(int argc, char* argv[]) {
+int main() {
+    std::string input_path = "videos/videos.mov";
+    std::string output_path = "videos/result.mov";
 
-    std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
-    cv::VideoCapture cap("../videos/IMG_7857.MOV");
-    std::cout << "CAP SIZE: " << cap.get(cv::CAP_PROP_FRAME_COUNT) << std::endl;
- 
-    bool printed_frame_stats = false;
+    VideoReader reader(input_path);
+    VideoWriter writer(output_path);
+    VideoMat vm;
 
-     while (true) {
-
-        cv::Mat frame;
-        if (!cap.read(frame)) break;
-
-        if (!printed_frame_stats) {
-            std::cout << "Frame size: (" << frame.rows << ", " << frame.cols << ")\n";
-            printed_frame_stats = true;
-        }
-        cv::imshow("Video Frame", frame);    
- 
-        char key = cv::waitKey(1);
-        if (key == 'q') {
-            break;
-        }
+    if (!reader.ReadVideo(vm)) {
+        std::cout << "Failed to read video\n";
+        return 0;
     }
 
-    cap.release();
-    cv::destroyAllWindows();
-    return 0;
+    int approx_order = 5;
+    SVD svd(vm, approx_order);
 
-    //return 0;
+    LowRankMask lrm(svd);
+    lrm.Apply(vm);
+
+    writer.Write(vm);
 }
