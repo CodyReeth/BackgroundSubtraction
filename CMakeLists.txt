@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(GTest REQUIRED)
 
 # Library
 
@@ -20,7 +21,7 @@ target_include_directories(svd_lib
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_link_libraries(svd_lib
-    PRIVATE 
+    PUBLIC
     Eigen3::Eigen
     ${OpenCV_LIBS}
 )
