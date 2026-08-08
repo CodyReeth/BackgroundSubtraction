@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(SVD)
+project(BackgroundSubtraction)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -14,13 +14,13 @@ find_package(GTest REQUIRED)
 file(GLOB_RECURSE sources src/*.cc)
 list(FILTER sources EXCLUDE REGEX ".*main\\.cc$")
 
-add_library(svd_lib ${sources})
+add_library(background_subtraction_lib ${sources})
 
-target_include_directories(svd_lib 
+target_include_directories(background_subtraction_lib 
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(svd_lib
+target_link_libraries(background_subtraction_lib
     PUBLIC
     Eigen3::Eigen
     ${OpenCV_LIBS}
@@ -28,10 +28,10 @@ target_link_libraries(svd_lib
 
 # Executable
 
-add_executable(svd src/main.cc)
-target_link_libraries(svd
+add_executable(background_subtraction src/main.cc)
+target_link_libraries(background_subtraction
     PRIVATE
-    svd_lib
+    background_subtraction_lib
 )
 
 # Tests
