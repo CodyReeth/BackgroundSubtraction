@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
+
 project(SVD)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
