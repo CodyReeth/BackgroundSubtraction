@@ -10,9 +10,10 @@ public:
     VideoFrame();
     VideoFrame(size_t size);
     void Resize(size_t size);
-    void Dot(VideoFrame& in, VideoFrame& out);
+    double Dot(VideoFrame& b);
     double& operator[](std::size_t index);
     double& operator()(std::size_t index);
+    size_t GetSize();
 };
 
 #endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOFRAME_H
