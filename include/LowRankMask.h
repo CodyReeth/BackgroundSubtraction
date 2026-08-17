@@ -1,5 +1,5 @@
-#ifndef SVD_INCLUDE_LOWRANKMASK_H
-#define SVD_INCLUDE_LOWRANKMASK_H
+#ifndef BACKGROUND_SUBTRACTION_INCLUDE_LOWRANKMASK_H
+#define BACKGROUND_SUBTRACTION_INCLUDE_LOWRANKMASK_H
 
 #include "VideoMat.h"
 #include "SVD.h"
@@ -9,4 +9,4 @@ public:
     LowRankMask(SVD& svd);
     void Apply(VideoMat& vm);
 };
-#endif // SVD_INCLUDE_LOWRANKMASK_H
+#endif // BACKGROUND_SUBTRACTION_INCLUDE_LOWRANKMASK_H

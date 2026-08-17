@@ -1,5 +1,5 @@
-#ifndef SVD_INCLUDE_VIDEOWRITER_H
-#define SVD_INCLUDE_VIDEOWRITER_H
+#ifndef BACKGROUND_SUBTRACTION_INCLUDE_VIDEOWRITER_H
+#define BACKGROUND_SUBTRACTION_INCLUDE_VIDEOWRITER_H
 
 #include <iostream>
 #include "VideoMat.h"
@@ -9,4 +9,4 @@ public:
     VideoWriter(const std::string& path);
     void Write(VideoMat& vm);
 };
-#endif // SVD_INCLUDE_VIDEOWRITER_H
+#endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOWRITER_H
