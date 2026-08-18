@@ -12,7 +12,7 @@ int main() {
     VideoReader reader(input_path);
     VideoWriter writer(output_path);
 
-    VideoMat vm(2,2);
+    VideoMat vm;
 
     if (!reader.ReadVideo(vm)) {
         std::cout << "Failed to read video\n";
