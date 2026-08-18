@@ -16,6 +16,7 @@ public:
     VideoMat(std::initializer_list<std::initializer_list<double>> elements);
     void Resize(std::size_t rows, std::size_t cols);
     double& operator()(std::size_t row, std::size_t col);
+    std::unique_ptr<VideoFrame> operator()(std::size_t col);
     void VMult(VideoFrame& in, VideoFrame& out);
     void MMult(VideoMat& in, VideoMat& out);
     size_t GetRows();

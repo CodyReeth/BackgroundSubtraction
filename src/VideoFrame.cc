@@ -1,4 +1,5 @@
 #include <iostream>
+#include <initializer_list>
 #include "VideoFrame.h"
 
 VideoFrame::VideoFrame()  
@@ -10,6 +11,11 @@ VideoFrame::VideoFrame(size_t size)
     : data_(std::make_unique<double[]>(size)),
     size_(size)
 {}
+VideoFrame::VideoFrame(std::initializer_list<double> elements) :
+    data_(std::make_unique<double[]>(elements.size())),
+    size_(elements.size()) {
+    std::copy(elements.begin(), elements.end(), &data_[0]);
+}
 
 void VideoFrame::Resize(size_t size) {
     data_ = std::make_unique<double[]>(size);
@@ -23,6 +29,26 @@ double& VideoFrame::operator()(std::size_t index) {
     return data_[index];
 }
 
+VideoFrame& VideoFrame::operator*=(double scale) {
+    for (size_t i = 0; i < size_; i++) {
+        data_[i] *= scale;
+    }
+    return *this;
+}
+VideoFrame& VideoFrame::operator+=(VideoFrame& f2) {
+    if (f2.GetSize() != size_) std::cerr << "Vectors must be the same size." << std::endl;
+    for (size_t i = 0; i < size_; i++) {
+        data_[i] += f2[i];
+    }
+    return *this;
+}
+VideoFrame& VideoFrame::operator-=(VideoFrame& f2) {
+    if (f2.GetSize() != size_) std::cerr << "Vectors must be the same size." << std::endl;
+    for (size_t i = 0; i < size_; i++) {
+        data_[i] -= f2[i];
+    }
+    return *this;
+}
 size_t VideoFrame::GetSize() {
     return size_;
 }

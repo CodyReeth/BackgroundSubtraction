@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "VideoMat.h"
+#include "VideoFrame.h"
 
 VideoMat::VideoMat() 
     : data_(nullptr),
@@ -32,7 +33,15 @@ void VideoMat::Resize(std::size_t rows, std::size_t cols) {
 }
 
 double& VideoMat::operator()(std::size_t row, std::size_t col) {
-    return data_[col + row * cols_];
+    return data_[row * cols_ + col];
+}
+
+std::unique_ptr<VideoFrame> VideoMat::operator()(std::size_t col) {
+    std::unique_ptr<VideoFrame> vf = std::make_unique<VideoFrame>(rows_);
+    for (size_t i = 0; i < rows_; i++) {
+        (*vf)[i] = data_[rows_ * col + i];
+    }
+    return vf;
 }
 
 void VideoMat::VMult(VideoFrame& in, VideoFrame& out) {
@@ -43,7 +52,7 @@ void VideoMat::VMult(VideoFrame& in, VideoFrame& out) {
     for (int i = 0; i < rows_; i++) {
         out[i] = 0;
         for (int j = 0; j < cols_; j++) {
-            out[i] += in[j] * data_[j + i * rows_];
+            out[i] += in[j] * data_[i + j * rows_];
         }
     }
 }
@@ -57,11 +66,19 @@ size_t VideoMat::GetCols() {
 }
 
 void VideoMat::MMult(VideoMat& in, VideoMat& out) {
-    for (int i = 0; i < out.GetRows(); i++) {
-        for (int j = 0; j < out.GetCols(); j++) {
+
+    for (int i = 0; i < out.GetCols(); i++) {
+        for (int j = 0; j < out.GetRows(); j++) {
             out(i,j) = 0;
+        }
+    }
+
+    for (int i = 0; i < out.GetCols(); i++) {
+        for (int j = 0; j < out.GetRows(); j++) {
             for (int k = 0; k < cols_; k++) {
-                out(i,j) += data_[k + i * rows_] * in(k,j);
+                //data(:,j) * in(i, :)
+                out(i,j) += data_[k * rows_ + j ] * in(i,k);
+
             }
         }
     }
