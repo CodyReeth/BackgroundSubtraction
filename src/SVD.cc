@@ -37,3 +37,9 @@ void SVD::QR(VideoMat &vm, VideoMat &q, VideoMat &r) {
     }
 }
 
+// Y = A Omega
+// QR = Y
+// B = Q^TA
+// BB^T = U^~Sigma^2U^~^T
+// U = QU^~
+// V = BU^~Sigma^-1

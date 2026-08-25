@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+#include <random>
 
 #include "VideoMat.h"
 #include "VideoFrame.h"
@@ -15,6 +16,7 @@ VideoMat::VideoMat(std::size_t rows, std::size_t cols)
     rows_(rows),
     cols_(cols)
 {}
+
 VideoMat::VideoMat(std::initializer_list<std::initializer_list<double>> elements) :
     data_(std::make_unique<double[]>(elements.size() * elements.begin()->size())),
     rows_(elements.begin()->size()),
@@ -33,7 +35,7 @@ void VideoMat::Resize(std::size_t rows, std::size_t cols) {
 }
 
 double& VideoMat::operator()(std::size_t row, std::size_t col) {
-    return data_[row * cols_ + col];
+    return data_[row * rows_ + col];
 }
 
 std::unique_ptr<VideoFrame> VideoMat::operator()(std::size_t col) {
@@ -46,8 +48,10 @@ std::unique_ptr<VideoFrame> VideoMat::operator()(std::size_t col) {
 
 void VideoMat::VMult(VideoFrame& in, VideoFrame& out) {
 
-    if(rows_ != in.GetSize()) std::cerr << "Matrix dimension must match vector dimension." << std::endl;
-    if(cols_ != out.GetSize()) std::cerr << "Input and output vectors must have same number of elements." << std::endl;
+    if(rows_ == 0 || cols_ == 0 || in.GetSize() == 0 || out.GetSize() == 0) throw std::invalid_argument("VMult: Cannot multiply with dimension zero");
+
+    if(cols_ != in.GetSize()) throw std::invalid_argument("VMult: Dimension mismatch");
+    if(rows_!= out.GetSize()) throw std::invalid_argument("VMult: Dimension mismatch");
 
     for (int i = 0; i < rows_; i++) {
         out[i] = 0;
@@ -55,6 +59,13 @@ void VideoMat::VMult(VideoFrame& in, VideoFrame& out) {
             out[i] += in[j] * data_[i + j * rows_];
         }
     }
+}
+
+void VideoMat::RawPrint() {
+    for (size_t i = 0; i < rows_ * cols_; i++) {
+        std::cout << data_[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 size_t VideoMat::GetRows() {
@@ -67,6 +78,9 @@ size_t VideoMat::GetCols() {
 
 void VideoMat::MMult(VideoMat& in, VideoMat& out) {
 
+    if(cols_ != in.GetRows()) throw std::invalid_argument("MMult: Dimension mismatch");
+    if(rows_ != out.GetRows() || in.GetCols() != out.GetCols()) throw std::invalid_argument("MMult: Dimension mismatch");
+
     for (int i = 0; i < out.GetCols(); i++) {
         for (int j = 0; j < out.GetRows(); j++) {
             out(i,j) = 0;
@@ -78,8 +92,18 @@ void VideoMat::MMult(VideoMat& in, VideoMat& out) {
             for (int k = 0; k < cols_; k++) {
                 //data(:,j) * in(i, :)
                 out(i,j) += data_[k * rows_ + j ] * in(i,k);
-
             }
+        }
+    }
+}
+void VideoMat::Randomize() {
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::normal_distribution<double> dist(0, 1);
+
+    for (size_t i = 0; i < cols_; i++) {
+        for (size_t j = 0; j < cols_; j++) {
+            data_[rows_ * i + j] = dist(gen);
         }
     }
 }

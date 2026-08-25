@@ -14,5 +14,5 @@ target_link_libraries(linalg_unittest
 
 include(GoogleTest)
 
-gtest_discover_tests(svd_unittest)
 gtest_discover_tests(linalg_unittest)
+gtest_discover_tests(svd_unittest)

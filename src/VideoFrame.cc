@@ -36,14 +36,14 @@ VideoFrame& VideoFrame::operator*=(double scale) {
     return *this;
 }
 VideoFrame& VideoFrame::operator+=(VideoFrame& f2) {
-    if (f2.GetSize() != size_) std::cerr << "Vectors must be the same size." << std::endl;
+    if (f2.GetSize() != size_ || size_ == 0) throw std::invalid_argument("+=: Vector size error");
     for (size_t i = 0; i < size_; i++) {
         data_[i] += f2[i];
     }
     return *this;
 }
 VideoFrame& VideoFrame::operator-=(VideoFrame& f2) {
-    if (f2.GetSize() != size_) std::cerr << "Vectors must be the same size." << std::endl;
+    if (f2.GetSize() != size_ || size_ == 0) throw std::invalid_argument("-=: Vector size error");
     for (size_t i = 0; i < size_; i++) {
         data_[i] -= f2[i];
     }
@@ -54,7 +54,7 @@ size_t VideoFrame::GetSize() {
 }
 
 double VideoFrame::Dot(VideoFrame &b) {
-    if (size_ != b.size_) std::cerr << "Dot product requires vectors of same length" << std::endl;
+    if (size_ != b.size_ || size_ == 0) throw std::invalid_argument("Dot: Vector size error");
 
     double res = 0;
     for (int i = 0; i < b.size_; i++) {

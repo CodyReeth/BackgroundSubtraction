@@ -21,6 +21,8 @@ public:
     void MMult(VideoMat& in, VideoMat& out);
     size_t GetRows();
     size_t GetCols();
+    void Randomize();
+    void RawPrint();
 };
 
 #endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOMAT_H

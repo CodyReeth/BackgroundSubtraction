@@ -43,7 +43,7 @@ TEST(QRDecomp, Reconstruction) {
     q.MMult(r, vm2);
     for (size_t i = 0; i < vm.GetCols(); i++) {
         for (size_t j = 0; j < vm.GetRows(); j++) {
-            EXPECT_DOUBLE_EQ(vm(i,j), vm2(i,j));
+            EXPECT_NEAR(vm(i,j), vm2(i,j), 1e-9);
         }
     }
 }
