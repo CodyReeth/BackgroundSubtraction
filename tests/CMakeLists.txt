@@ -5,6 +5,14 @@ target_link_libraries(svd_unittest
     GTest::gtest_main
 )
 
+add_executable(linalg_unittest linalg_unittest.cc)
+target_link_libraries(linalg_unittest
+    PRIVATE
+    background_subtraction_lib
+    GTest::gtest_main
+)
+
 include(GoogleTest)
 
+gtest_discover_tests(linalg_unittest)
 gtest_discover_tests(svd_unittest)

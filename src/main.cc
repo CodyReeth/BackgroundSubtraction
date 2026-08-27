@@ -11,6 +11,7 @@ int main() {
 
     VideoReader reader(input_path);
     VideoWriter writer(output_path);
+
     VideoMat vm;
 
     if (!reader.ReadVideo(vm)) {
