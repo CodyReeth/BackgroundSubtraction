@@ -1,5 +1,7 @@
 videos/*
 build/*
 .cache/*
+*.mp4
+*.DS_Store
 
 

@@ -7,6 +7,9 @@
 class VideoReader {
 public: 
     VideoReader(const std::string& path);
-    bool ReadVideo(VideoMat& mat);
+    void ReadVideo(VideoMat& mat);
+
+private:
+    std::string path_;
 };
 #endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOREADER_H
