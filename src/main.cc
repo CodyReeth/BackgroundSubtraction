@@ -21,5 +21,7 @@ int main() {
     LowRankMask lrm(svd);
     lrm.Apply(vm);
 
-    writer.Write(vm);
+    writer.WriteVideo(vm);
+    std::string frame_path = "../videos/test.png";
+    writer.WriteFrame(*vm(0),frame_path);
 }

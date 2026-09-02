@@ -26,6 +26,7 @@ public:
     void Randomize();
     void RawPrint();
     double* GetData();
+    void LoadFrame(size_t index, VideoFrame& out);
 };
 
 #endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOMAT_H
