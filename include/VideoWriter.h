@@ -7,6 +7,10 @@
 class VideoWriter {
 public:
     VideoWriter(const std::string& path);
-    void Write(VideoMat& vm);
+    void WriteVideo(VideoMat& vm);
+    void WriteFrame(VideoFrame& f, std::string& path);
+
+private:
+    std::string path_;
 };
 #endif // BACKGROUND_SUBTRACTION_INCLUDE_VIDEOWRITER_H

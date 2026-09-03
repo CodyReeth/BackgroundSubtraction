@@ -1,6 +1,10 @@
 #include <memory>
 #include <iostream>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/opencv.hpp>
 #include <random>
+#include <stdexcept>
 
 #include "VideoMat.h"
 #include "VideoFrame.h"
@@ -10,6 +14,7 @@ VideoMat::VideoMat()
     rows_(0),
     cols_(0)
 {}
+
 
 VideoMat::VideoMat(std::size_t rows, std::size_t cols) 
     : data_(std::make_unique<double[]>(rows * cols)),
@@ -28,10 +33,22 @@ VideoMat::VideoMat(std::initializer_list<std::initializer_list<double>> elements
         }
 }
 
-void VideoMat::Resize(std::size_t rows, std::size_t cols) {
+double* VideoMat::GetData() {
+    return data_.get();
+}
+
+void VideoMat::LoadFrame(size_t index, VideoFrame& out) {
+    if (out.GetSize() != rows_) throw std::invalid_argument("LoadFrame: incompatible sizes");
+
+    std::memcpy(&data_[rows_ * index], out.GetData(), rows_);
+}
+
+void VideoMat::Resize(std::size_t rows, std::size_t cols, int frame_width, int frame_height) {
+
     data_ = std::make_unique<double[]>(rows * cols);
     rows_ = rows;
     cols_ = cols;
+    frame_dims_ = std::make_pair(frame_width, frame_height);
 }
 
 double& VideoMat::operator()(std::size_t row, std::size_t col) {
@@ -39,7 +56,7 @@ double& VideoMat::operator()(std::size_t row, std::size_t col) {
 }
 
 std::unique_ptr<VideoFrame> VideoMat::operator()(std::size_t col) {
-    std::unique_ptr<VideoFrame> vf = std::make_unique<VideoFrame>(rows_);
+    std::unique_ptr<VideoFrame> vf = std::make_unique<VideoFrame>(rows_,frame_dims_.first,frame_dims_.second);
     for (size_t i = 0; i < rows_; i++) {
         (*vf)[i] = data_[rows_ * col + i];
     }
@@ -106,4 +123,8 @@ void VideoMat::Randomize() {
             data_[rows_ * i + j] = dist(gen);
         }
     }
+}
+
+std::pair<int,int> VideoMat::GetFrameDims() {
+    return frame_dims_;
 }

@@ -11,15 +11,31 @@ VideoFrame::VideoFrame(size_t size)
     : data_(std::make_unique<double[]>(size)),
     size_(size)
 {}
+
+VideoFrame::VideoFrame(size_t size, int width, int height)  
+    : data_(std::make_unique<double[]>(size)),
+    size_(size),
+    frame_dims_(std::make_pair(width,height))
+{}
+
 VideoFrame::VideoFrame(std::initializer_list<double> elements) :
     data_(std::make_unique<double[]>(elements.size())),
     size_(elements.size()) {
     std::copy(elements.begin(), elements.end(), &data_[0]);
 }
 
-void VideoFrame::Resize(size_t size) {
+void VideoFrame::Resize(size_t size, int width, int height) {
     data_ = std::make_unique<double[]>(size);
     size_ = size;
+    frame_dims_ = std::make_pair(width, height);
+}
+
+std::pair<int,int> VideoFrame::GetFrameDims() {
+    return frame_dims_;
+}
+
+double* VideoFrame::GetData() {
+    return data_.get();
 }
 
 double& VideoFrame::operator[](std::size_t index) {
