@@ -5,6 +5,8 @@
 #include <opencv2/opencv.hpp>
 #include <random>
 #include <stdexcept>
+#include <Accelerate/Accelerate.h>
+#include <vecLib/vecLib.h>
 
 #include "VideoMat.h"
 #include "VideoFrame.h"
@@ -21,6 +23,15 @@ VideoMat::VideoMat(std::size_t rows, std::size_t cols)
     rows_(rows),
     cols_(cols)
 {}
+
+VideoMat::VideoMat(VideoMat& vm) 
+    : data_(std::make_unique<double[]>(vm.GetRows() * vm.GetCols())),
+    rows_(vm.GetRows()),
+    cols_(vm.GetCols()),
+    frame_dims_(vm.GetFrameDims())
+{
+    std::memcpy(vm.GetData(), data_.get(), rows_ * cols_);
+}
 
 VideoMat::VideoMat(std::initializer_list<std::initializer_list<double>> elements) :
     data_(std::make_unique<double[]>(elements.size() * elements.begin()->size())),
@@ -61,6 +72,11 @@ std::unique_ptr<VideoFrame> VideoMat::operator()(std::size_t col) {
         (*vf)[i] = data_[rows_ * col + i];
     }
     return vf;
+}
+void VideoMat::FillData(double val) {
+    for (size_t i = 0; i < rows_ * cols_; i++) {
+        data_[i] = val;
+    }
 }
 
 void VideoMat::VMult(VideoFrame& in, VideoFrame& out) {
@@ -112,6 +128,25 @@ void VideoMat::MMult(VideoMat& in, VideoMat& out) {
             }
         }
     }
+}
+
+void VideoMat::MMultFast(VideoMat& in, VideoMat& out) {
+
+    if(cols_ != in.GetRows()) throw std::invalid_argument("MMult: Dimension mismatch");
+    if(rows_ != out.GetRows() || in.GetCols() != out.GetCols()) throw std::invalid_argument("MMult: Dimension mismatch");
+
+    // C = alpha * A * B + beta * C
+    cblas_dgemm(
+        CblasColMajor,
+        CblasNoTrans,
+        CblasNoTrans,
+        rows_, in.GetCols(), cols_,
+        /* alpha = */ 1.0,
+        data_.get(), rows_,
+        in.GetData(), cols_,
+        /* beta = */ 0.0,
+        out.GetData(), rows_
+                );
 }
 void VideoMat::Randomize() {
     std::random_device rd; 

@@ -15,6 +15,10 @@ file(GLOB_RECURSE sources src/*.cc)
 list(FILTER sources EXCLUDE REGEX ".*main\\.cc$")
 
 add_library(background_subtraction_lib ${sources})
+target_compile_definitions(background_subtraction_lib
+    PUBLIC
+    ACCELERATE_NEW_LAPACK
+)
 
 target_include_directories(background_subtraction_lib 
     PUBLIC
@@ -24,6 +28,7 @@ target_link_libraries(background_subtraction_lib
     PUBLIC
     Eigen3::Eigen
     ${OpenCV_LIBS}
+    "-framework Accelerate"
 )
 
 # Executable
