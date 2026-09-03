@@ -54,6 +54,13 @@ void VideoMat::LoadFrame(size_t index, VideoFrame& out) {
     std::memcpy(&data_[rows_ * index], out.GetData(), rows_);
 }
 
+void VideoMat::Resize(std::size_t rows, std::size_t cols) {
+
+    data_ = std::make_unique<double[]>(rows * cols);
+    rows_ = rows;
+    cols_ = cols;
+}
+
 void VideoMat::Resize(std::size_t rows, std::size_t cols, int frame_width, int frame_height) {
 
     data_ = std::make_unique<double[]>(rows * cols);
@@ -140,6 +147,43 @@ void VideoMat::MMultFast(VideoMat& in, VideoMat& out) {
         CblasColMajor,
         CblasNoTrans,
         CblasNoTrans,
+        rows_, in.GetCols(), cols_,
+        /* alpha = */ 1.0,
+        data_.get(), rows_,
+        in.GetData(), cols_,
+        /* beta = */ 0.0,
+        out.GetData(), rows_
+                );
+}
+
+void VideoMat::MMultFastTransposeLeft(VideoMat& in, VideoMat& out) {
+
+    if(rows_!= in.GetRows()) throw std::invalid_argument("MMult: Dimension mismatch");
+    if(cols_!= out.GetRows() || in.GetCols() != out.GetCols()) throw std::invalid_argument("MMult: Dimension mismatch");
+
+    // C = alpha * A * B + beta * C
+    cblas_dgemm(
+        CblasColMajor,
+        CblasTrans,
+        CblasNoTrans,
+        rows_, in.GetCols(), cols_,
+        /* alpha = */ 1.0,
+        data_.get(), rows_,
+        in.GetData(), cols_,
+        /* beta = */ 0.0,
+        out.GetData(), rows_
+                );
+}
+void VideoMat::MMultFastTransposeRight(VideoMat& in, VideoMat& out) {
+
+    if(cols_ != in.GetCols()) throw std::invalid_argument("MMult: Dimension mismatch");
+    if(rows_ != out.GetRows() || in.GetRows() != out.GetCols()) throw std::invalid_argument("MMult: Dimension mismatch");
+
+    // C = alpha * A * B + beta * C
+    cblas_dgemm(
+        CblasColMajor,
+        CblasNoTrans,
+        CblasTrans,
         rows_, in.GetCols(), cols_,
         /* alpha = */ 1.0,
         data_.get(), rows_,

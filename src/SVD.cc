@@ -1,9 +1,40 @@
-#include "SVD.h"
+#include <iostream>
 #include <cmath>
 #include <memory>
 
-SVD::SVD(VideoMat& vm, int rank)
-{}
+#include "SVD.h"
+
+SVD::SVD(VideoMat& vm, int rank) { // Y = A Omega
+// QR = Y
+// B = Q^TA
+// BB^T = U^~Sigma^2U^~^T
+// U = QU^~
+// V = BU^~Sigma^-1
+VideoMat omega_m, y_m, q_m, r_m, b_m, bbt_m, u_tilde_m, u_m, v_m;
+omega_m.Resize(vm.GetCols(), rank);
+omega_m.Randomize();
+y_m.Resize(vm.GetRows(), rank);
+
+vm.MMultFast(omega_m, y_m);
+
+q_m.Resize(vm.GetRows(), rank);
+r_m.Resize(rank,rank);
+QR(vm,q_m,r_m);
+
+b_m.Resize(rank, vm.GetCols());
+q_m.MMultFastTransposeLeft(vm, b_m);
+
+bbt_m.Resize(rank,rank);
+VideoMat b_m_copy(b_m);
+b_m.MMultFastTransposeRight(b_m_copy, bbt_m);
+
+//Eigendecomposition
+// symmetry test
+for (int i = 0; i < bbt_m.GetRows(); i++) {
+        if (bbt_m(i,i) - bbt_m(bbt_m.GetRows() - i,bbt_m.GetRows() - i) > 1e-5) std::cout << "MISMATCH\n";
+    }
+
+}
 
 void SVD::QR(VideoMat &vm, VideoMat &q, VideoMat &r) {
 
@@ -37,9 +68,3 @@ void SVD::QR(VideoMat &vm, VideoMat &q, VideoMat &r) {
     }
 }
 
-// Y = A Omega
-// QR = Y
-// B = Q^TA
-// BB^T = U^~Sigma^2U^~^T
-// U = QU^~
-// V = BU^~Sigma^-1

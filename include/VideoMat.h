@@ -16,12 +16,15 @@ public:
     VideoMat(VideoMat& vm);
     VideoMat(std::size_t rows, std::size_t cols);
     VideoMat(std::initializer_list<std::initializer_list<double>> elements);
+    void Resize(std::size_t rows, std::size_t cols);
     void Resize(std::size_t rows, std::size_t cols, int frame_width, int frame_height);
     double& operator()(std::size_t row, std::size_t col);
     std::unique_ptr<VideoFrame> operator()(std::size_t col);
     void VMult(VideoFrame& in, VideoFrame& out);
     void MMult(VideoMat& in, VideoMat& out);
     void MMultFast(VideoMat& in, VideoMat& out);
+    void MMultFastTransposeLeft(VideoMat& in, VideoMat& out);
+    void MMultFastTransposeRight(VideoMat& in, VideoMat& out);
     size_t GetRows();
     size_t GetCols();
     std::pair<int,int> GetFrameDims();

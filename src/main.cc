@@ -6,7 +6,7 @@
 #include "LowRankMask.h"
 
 int main() {
-    std::string input_path = "../videos/output.mp4";
+    std::string input_path = "../videos/forest.mp4";
     std::string output_path = "../videos/test2.mp4";
 
     VideoReader reader(input_path);
@@ -15,6 +15,7 @@ int main() {
     VideoMat vm;
     reader.ReadVideo(vm);
 
+    /*
     VideoMat vm2;
     vm2.Resize(vm.GetCols(),vm.GetCols(),vm.GetFrameDims().first,vm.GetFrameDims().second);
     VideoMat vm3(vm);
@@ -24,14 +25,15 @@ int main() {
     }
     //vm2.Randomize();
     vm.MMultFast(vm2,vm3);
+    */
 
     int approx_order = 5;
+    std::cout << "BEGIN RSVD\n";
     SVD svd(vm, approx_order);
+    std::cout << "END RSVD\n";
 
     LowRankMask lrm(svd);
     lrm.Apply(vm);
 
-    writer.WriteVideo(vm3);
-    //std::string frame_path = "../videos/test.png";
-    //writer.WriteFrame(*vm(0),frame_path);
+    writer.WriteVideo(vm);
 }
