@@ -27,7 +27,7 @@ int main() {
     vm.MMultFast(vm2,vm3);
     */
 
-    int approx_order = 5;
+    int approx_order = 3;
     std::cout << "BEGIN RSVD\n";
     SVD svd(vm, approx_order);
     std::cout << "END RSVD\n";

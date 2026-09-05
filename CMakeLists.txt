@@ -9,6 +9,17 @@ find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(GTest REQUIRED)
 
+# Debug / sanitizer configuration
+add_library(sanitizers INTERFACE)
+
+target_compile_options(sanitizers INTERFACE
+    $<$<CONFIG:Debug>:-g -O0 -fno-omit-frame-pointer -fsanitize=address,undefined>
+)
+
+target_link_options(sanitizers INTERFACE
+    $<$<CONFIG:Debug>:-fsanitize=address,undefined>
+)
+
 # Library
 
 file(GLOB_RECURSE sources src/*.cc)
@@ -29,6 +40,7 @@ target_link_libraries(background_subtraction_lib
     Eigen3::Eigen
     ${OpenCV_LIBS}
     "-framework Accelerate"
+    sanitizers
 )
 
 # Executable

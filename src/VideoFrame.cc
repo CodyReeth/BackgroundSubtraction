@@ -10,7 +10,17 @@ VideoFrame::VideoFrame()
 VideoFrame::VideoFrame(size_t size)  
     : data_(std::make_unique<double[]>(size)),
     size_(size)
+
 {}
+VideoFrame::VideoFrame(VideoFrame& f)  
+    : data_(std::make_unique<double[]>(f.GetSize())),
+    size_(f.GetSize())
+{
+    for (size_t i = 0; i < size_; i++) {
+        data_[i] = f(i);
+    }
+
+}
 
 VideoFrame::VideoFrame(size_t size, int width, int height)  
     : data_(std::make_unique<double[]>(size)),
@@ -58,6 +68,14 @@ VideoFrame& VideoFrame::operator+=(VideoFrame& f2) {
     }
     return *this;
 }
+VideoFrame& VideoFrame::operator=(VideoFrame& f2) {
+    data_ = std::make_unique<double[]>(f2.GetSize());
+    size_= f2.GetSize();
+    for (size_t i = 0; i < size_; i++) {
+        data_[i] = f2[i];
+    }
+    return *this;
+}
 VideoFrame& VideoFrame::operator-=(VideoFrame& f2) {
     if (f2.GetSize() != size_ || size_ == 0) throw std::invalid_argument("-=: Vector size error");
     for (size_t i = 0; i < size_; i++) {
@@ -78,4 +96,11 @@ double VideoFrame::Dot(VideoFrame &b) {
     }
 
     return res;
+}
+
+void VideoFrame::RawPrint() {
+    for (size_t i = 0; i < size_; i++) {
+        std::cout << data_[i] << " ";
+    }
+    std::cout << std::endl;
 }

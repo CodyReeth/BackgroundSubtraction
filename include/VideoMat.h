@@ -14,6 +14,7 @@ private:
 public:
     VideoMat();
     VideoMat(VideoMat& vm);
+    void SetColumn(int column, VideoFrame& f);
     VideoMat(std::size_t rows, std::size_t cols);
     VideoMat(std::initializer_list<std::initializer_list<double>> elements);
     void Resize(std::size_t rows, std::size_t cols);

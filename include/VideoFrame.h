@@ -12,6 +12,8 @@ public:
     VideoFrame();
     VideoFrame(size_t size);
     VideoFrame(size_t size, int width, int height);
+    VideoFrame(VideoFrame& f);
+    void RawPrint();
     VideoFrame(std::initializer_list<double> elements);
     void Resize(size_t size, int width, int height);
     double Dot(VideoFrame& b);
@@ -19,6 +21,7 @@ public:
     double& operator()(std::size_t index);
     size_t GetSize();
     VideoFrame& operator*=(double scale);
+    VideoFrame& operator=(VideoFrame& f2);
     VideoFrame& operator+=(VideoFrame& f2);
     VideoFrame& operator-=(VideoFrame& f2);
     double* GetData();

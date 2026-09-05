@@ -24,6 +24,10 @@ VideoMat::VideoMat(std::size_t rows, std::size_t cols)
     cols_(cols)
 {}
 
+void VideoMat::SetColumn(int column, VideoFrame& f) {
+    std::memcpy(data_.get() + column * rows_, f.GetData(), f.GetSize() * sizeof(double));
+}
+
 VideoMat::VideoMat(VideoMat& vm) 
     : data_(std::make_unique<double[]>(vm.GetRows() * vm.GetCols())),
     rows_(vm.GetRows()),
@@ -166,10 +170,10 @@ void VideoMat::MMultFastTransposeLeft(VideoMat& in, VideoMat& out) {
         CblasColMajor,
         CblasTrans,
         CblasNoTrans,
-        rows_, in.GetCols(), cols_,
+        cols_, in.GetCols(), rows_,
         /* alpha = */ 1.0,
         data_.get(), rows_,
-        in.GetData(), cols_,
+        in.GetData(), in.GetRows(),
         /* beta = */ 0.0,
         out.GetData(), rows_
                 );
@@ -184,10 +188,10 @@ void VideoMat::MMultFastTransposeRight(VideoMat& in, VideoMat& out) {
         CblasColMajor,
         CblasNoTrans,
         CblasTrans,
-        rows_, in.GetCols(), cols_,
+        rows_, in.GetRows(), cols_,
         /* alpha = */ 1.0,
         data_.get(), rows_,
-        in.GetData(), cols_,
+        in.GetData(), in.GetRows(),
         /* beta = */ 0.0,
         out.GetData(), rows_
                 );
@@ -198,7 +202,7 @@ void VideoMat::Randomize() {
     std::normal_distribution<double> dist(0, 1);
 
     for (size_t i = 0; i < cols_; i++) {
-        for (size_t j = 0; j < cols_; j++) {
+        for (size_t j = 0; j < rows_; j++) {
             data_[rows_ * i + j] = dist(gen);
         }
     }
